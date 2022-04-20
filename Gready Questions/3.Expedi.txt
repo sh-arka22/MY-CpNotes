@@ -1,0 +1,110 @@
+Problem Name: 
+Problem Difficulty: 
+Problem Constraints: 1 <= N <= 10,000
+
+1 <= P <= 1,000,000
+Problem Description:
+A group of cows grabbed a truck and ventured on an expedition deep into the jungle. Being rather poor drivers, the cows unfortunately managed to run over a rock and puncture the truck's fuel tank. The truck now leaks one unit of fuel every unit of distance it travels.
+
+To repair the truck, the cows need to drive to the nearest town (no more than 1,000,000 units distant) down a long, winding road. On this road, between the town and the current location of the truck, there are N (1 <= N <= 10,000) fuel stops where the cows can stop to acquire additional fuel (1..100 units at each stop).
+
+The jungle is a dangerous place for humans and is especially dangerous for cows. Therefore, the cows want to make the minimum possible number of stops for fuel on the way to the town. Fortunately, the capacity of the fuel tank on their truck is so large that there is effectively no limit to the amount of fuel it can hold. The truck is currently L units away from the town and has P units of fuel (1 <= P <= 1,000,000).
+
+Determine the minimum number of stops needed to reach the town, or if the cows cannot reach the town at all.
+
+Input Format: The First Line contains a N integer followed by N number of pairs in the next lines. <br>
+Each line contains two space-separated integers describing a fuel stop: The first integer is the distance from the town to the stop; the second is the amount of fuel available at that stop. <br>
+The Last line contains a pair of L and P.
+Sample Input: 4
+4 4
+5 2
+11 5
+15 10
+25 10
+Output Format: Output single integer denoting the minimum number of stops.
+Sample Output: 2
+
+
+
+=====Solution=====
+#include <bits/stdc++.h>
+using namespace std;
+#define sync                          \
+    ios_base::sync_with_stdio(false); \
+    cin.tie(0);                       \
+    cout.tie(0);
+#define MOD 1000000007
+
+#define ff first
+#define ss second
+
+#define ll long long
+#define pii pair<ll, ll>
+#define vi vector<ll>
+
+template <class T>
+using maxPQ = priority_queue<T>;
+template <class T>
+using minPQ = priority_queue<T, vector<T>, greater<T>>;
+
+int expedi(vector<pii> &arr, int distance, int currentFuel)
+{
+    vector<int> v(distance + 1);
+    for (int i = 0; i < arr.size(); ++i)
+    {
+        v[distance - arr[i].ff] = arr[i].ss;
+    }
+    // int maxReach = currentFuel;
+    int step = currentFuel;
+    int jump = 0;
+    maxPQ<ll> pq;
+    for (int i = 1; i < v.size(); i++)
+    {
+        // Check if we have reached the end of the array
+        if (i == distance)
+        {
+            return jump;
+        }
+        if (v[i])
+            pq.push(v[i]);
+
+        // we use a step to get to the current index
+        step--;
+
+        // If no further steps left
+        if (step == 0)
+        {
+            // we must have used a jump
+            jump++;
+
+            if (pq.empty())
+                return -1;
+
+            // Check if the current index/position or lesser index
+            // is the maximum reach point from the previous indexes
+            // re-initialize the steps to the amount
+            // of steps to reach maxReach from position i.
+            step = pq.top();
+            pq.pop();
+        }
+    }
+    return -1;
+}
+
+int main()
+{
+    sync;
+    int n;
+    cin >> n;
+    vector<pii> v(n);
+    for (int i = 0; i < n; ++i)
+    {
+        cin >> v[i].ff >> v[i].ss;
+    }
+    int currentFuel, distance;
+    cin >> distance >> currentFuel;
+
+    cout << expedi(v, distance, currentFuel) << '\n';
+
+    return 0;
+}
